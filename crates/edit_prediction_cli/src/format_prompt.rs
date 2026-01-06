@@ -37,12 +37,12 @@ pub async fn run_format_prompt(
         PromptFormat::Zeta2 => {
             run_load_project(example, app_state, cx.clone()).await?;
 
-            let ep_store = cx.update(|cx| {
-                EditPredictionStore::try_global(cx).context("EditPredictionStore not initialized")
-            })??;
+            let ep_store = cx
+                .update(|cx| EditPredictionStore::try_global(cx))
+                .context("EditPredictionStore not initialized")?;
 
             let state = example.state.as_ref().context("state must be set")?;
-            let snapshot = state.buffer.read_with(&cx, |buffer, _| buffer.snapshot())?;
+            let snapshot = state.buffer.read_with(&cx, |buffer, _| buffer.snapshot());
             let project = state.project.clone();
             let (_, input) = ep_store.update(&mut cx, |ep_store, cx| {
                 anyhow::Ok(zeta2_prompt_input(
@@ -61,7 +61,7 @@ pub async fn run_format_prompt(
                         .context("buffer must be set")?
                         .cursor_offset,
                 ))
-            })??;
+            })?;
             let prompt = format_zeta_prompt(&input);
             let expected_output =
                 zeta2_output_for_patch(&input, &example.spec.expected_patch.clone())?;
