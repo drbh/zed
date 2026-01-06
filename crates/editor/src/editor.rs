@@ -16242,9 +16242,10 @@ impl Editor {
                 })
                     .await;
             let Ok(lsp_tasks) =
-                cx.update(|_, cx| crate::lsp_tasks(project.clone(), &task_sources, None, cx)) else {
-                    return;
-                };
+                cx.update(|_, cx| crate::lsp_tasks(project.clone(), &task_sources, None, cx))
+            else {
+                return;
+            };
             let lsp_tasks = lsp_tasks.await;
 
             let Ok(mut lsp_tasks_by_rows) = cx.update(|_, cx| {
@@ -18318,17 +18319,17 @@ impl Editor {
                 }
             };
 
-            buffer
-                .update(cx, |buffer, cx| {
-                    if let Some(transaction) = transaction
-                        && !buffer.is_singleton()
-                    {
-                        buffer.push_transaction(&transaction.0, cx);
-                    }
-                    cx.notify();
-                });
+            buffer.update(cx, |buffer, cx| {
+                if let Some(transaction) = transaction
+                    && !buffer.is_singleton()
+                {
+                    buffer.push_transaction(&transaction.0, cx);
+                }
+                cx.notify();
+            });
 
-            if let Some(transaction_id_now) = buffer.read_with(cx, |b, cx| b.last_transaction_id(cx))
+            if let Some(transaction_id_now) =
+                buffer.read_with(cx, |b, cx| b.last_transaction_id(cx))
             {
                 let has_new_transaction = transaction_id_prev != Some(transaction_id_now);
                 if has_new_transaction {
@@ -21076,10 +21077,7 @@ impl Editor {
                         struct OpenPermalinkToLine;
 
                         workspace.show_toast(
-                            Toast::new(
-                                NotificationId::unique::<OpenPermalinkToLine>(),
-                                message,
-                            ),
+                            Toast::new(NotificationId::unique::<OpenPermalinkToLine>(), message),
                             cx,
                         )
                     });
@@ -23831,8 +23829,7 @@ fn update_uncommitted_diff_for_buffer(
     });
     cx.spawn(async move |cx| {
         let diffs = future::join_all(tasks).await;
-        if editor.read_with(cx, |editor, _cx| editor.temporary_diff_override)
-        {
+        if editor.read_with(cx, |editor, _cx| editor.temporary_diff_override) {
             return;
         }
 

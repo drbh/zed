@@ -79,8 +79,7 @@ impl EditPredictionDelegate for CopilotEditPredictionDelegate {
                 .await?;
 
             if let Some(mut completion) = completions.into_iter().next()
-                && let Some(trimmed_completion) =
-                    cx.update(|cx| trim_completion(&completion, cx))
+                && let Some(trimmed_completion) = cx.update(|cx| trim_completion(&completion, cx))
             {
                 let preview = buffer
                     .update(cx, |this, cx| {

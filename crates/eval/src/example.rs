@@ -359,28 +359,31 @@ impl ExampleContext {
     pub fn edits(&self) -> HashMap<Arc<RelPath>, FileEdits> {
         self.agent_thread.read_with(&self.app, |thread, cx| {
             let action_log = thread.action_log().read(cx);
-            HashMap::from_iter(action_log.changed_buffers(cx).into_iter().map(
-                |(buffer, diff)| {
-                    let snapshot = buffer.read(cx).snapshot();
+            HashMap::from_iter(
+                action_log
+                    .changed_buffers(cx)
+                    .into_iter()
+                    .map(|(buffer, diff)| {
+                        let snapshot = buffer.read(cx).snapshot();
 
-                    let file = snapshot.file().unwrap();
-                    let diff = diff.read(cx);
-                    let base_text = diff.base_text().text();
+                        let file = snapshot.file().unwrap();
+                        let diff = diff.read(cx);
+                        let base_text = diff.base_text().text();
 
-                    let hunks = diff
-                        .hunks(&snapshot, cx)
-                        .map(|hunk| FileEditHunk {
-                            base_text: base_text[hunk.diff_base_byte_range.clone()].to_string(),
-                            text: snapshot
-                                .text_for_range(hunk.range.clone())
-                                .collect::<String>(),
-                            status: hunk.status(),
-                        })
-                        .collect();
+                        let hunks = diff
+                            .hunks(&snapshot, cx)
+                            .map(|hunk| FileEditHunk {
+                                base_text: base_text[hunk.diff_base_byte_range.clone()].to_string(),
+                                text: snapshot
+                                    .text_for_range(hunk.range.clone())
+                                    .collect::<String>(),
+                                status: hunk.status(),
+                            })
+                            .collect();
 
-                    (file.path().clone(), FileEdits { hunks })
-                },
-            ))
+                        (file.path().clone(), FileEdits { hunks })
+                    }),
+            )
         })
     }
 
@@ -427,11 +430,7 @@ impl AppContext for ExampleContext {
         self.app.as_mut(handle)
     }
 
-    fn read_entity<T, R>(
-        &self,
-        handle: &Entity<T>,
-        read: impl FnOnce(&T, &App) -> R,
-    ) -> R
+    fn read_entity<T, R>(&self, handle: &Entity<T>, read: impl FnOnce(&T, &App) -> R) -> R
     where
         T: 'static,
     {
