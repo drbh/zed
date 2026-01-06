@@ -647,20 +647,26 @@ fn get_settings_for_worktree(
 - Settings can be added to `settings.json` without errors
 - Invalid regexes are logged and skipped
 
-### PR 2: Permission Evaluation + Terminal Tool
+### PR 2: Permission Evaluation + Terminal Tool ✅ COMPLETE
+
+**Status**: Draft PR #46155 - CI green, awaiting review
 
 **Goal**: Terminal tool respects new permission rules
 
-- [ ] Create `crates/agent/src/tool_permissions.rs` with `decide_permission()`
-- [ ] Write unit tests for `decide_permission()`:
+- [x] Create `crates/agent/src/tool_permissions.rs` with `decide_permission()`
+- [x] Write unit tests for `decide_permission()` (15 tests):
   - Test deny > confirm > allow precedence
   - Test case sensitivity flag
   - Test regex matching anywhere in string
-- [ ] Integrate with `terminal_tool.rs`
-- [ ] Write integration test with `VisualTestContext`
-- [ ] Commit with `Co-Authored-By: Claude Opus 4.5`
+  - Test default mode handling
+  - Test fork bomb pattern matching
+- [x] Integrate with `terminal_tool.rs`
+- [x] Write integration tests:
+  - `test_terminal_tool_deny_rule_blocks_command`
+  - `test_terminal_tool_allow_rule_skips_confirmation`
+- [x] Commit with `Co-Authored-By: Claude Opus 4.5`
 
-**Verification**:
+**Verification**: ✅
 
 - Terminal commands matching deny rules are rejected
 - Terminal commands matching allow rules auto-approve
