@@ -97,15 +97,46 @@ Use Zed's `VisualTestContext` system to verify UI changes:
 
 4. **Iterate based on visual feedback** - if something looks wrong, fix it before moving on
 
+### Branch Stacking Strategy
+
+All PRs in this feature are **stacked on top of each other**:
+
+```
+origin/main
+  └── tool-permission-granularity (PR 1)
+        └── tool-permission-2 (PR 2)
+              └── tool-permission-3 (PR 3)
+                    └── tool-permission-4 (PR 4, future)
+                          └── tool-permission-5 (PR 5, future)
+```
+
+This ensures clean diffs for reviewers - each PR only shows its own changes, not changes from previous PRs.
+
 ### Before Pushing Each PR
 
-1. **Fetch and merge origin/main**:
+1. **Update the entire stack with origin/main**:
 
    ```bash
+   # First, update the base branch with origin/main
+   git checkout tool-permission-granularity
    git fetch origin
    git merge origin/main
-   # Resolve conflicts if any
+   git push
+   
+   # Then rebase each branch on top of the previous one
+   git checkout tool-permission-2
+   git rebase tool-permission-granularity
+   
+   git checkout tool-permission-3
+   git rebase tool-permission-2
+   
+   # Continue for any additional branches...
+   
+   # Force push all rebased branches
+   git push --force-with-lease origin tool-permission-2 tool-permission-3
    ```
+
+   **Why this matters**: If you just merge origin/main into each branch independently, the PRs will show duplicate commits and messy diffs. Rebasing maintains the clean stack.
 
 2. **Run tests locally**:
 
