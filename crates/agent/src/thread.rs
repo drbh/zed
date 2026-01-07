@@ -2664,7 +2664,10 @@ impl ToolCallEventStream {
                 _ => format!("Always allow in `{}`", display),
             };
             options.push(acp::PermissionOption::new(
-                acp::PermissionOptionId::new(format!("always_allow_pattern:{}:{}", tool_name, pattern)),
+                acp::PermissionOptionId::new(format!(
+                    "always_allow_pattern:{}:{}",
+                    tool_name, pattern
+                )),
                 button_text,
                 acp::PermissionOptionKind::AllowAlways,
             ));
