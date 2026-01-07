@@ -1,5 +1,5 @@
-use action_log::ActionLog;
 use acp_thread::{AcpThread, AgentConnection, UserMessageId};
+use action_log::ActionLog;
 use agent_client_protocol as acp;
 use anyhow::{Result, anyhow};
 use collections::HashSet;
@@ -291,8 +291,13 @@ async fn run_subagent(
     let acp_thread_weak = acp_thread.downgrade();
 
     let timed_out = if let Some(timeout) = timeout_ms {
-        forward_events_with_timeout(&mut events_rx, &acp_thread_weak, Duration::from_millis(timeout), cx)
-            .await
+        forward_events_with_timeout(
+            &mut events_rx,
+            &acp_thread_weak,
+            Duration::from_millis(timeout),
+            cx,
+        )
+        .await
     } else {
         forward_events_until_stop(&mut events_rx, &acp_thread_weak, cx).await;
         false

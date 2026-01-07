@@ -3340,7 +3340,11 @@ impl AcpThreadView {
                                 .size(IconSize::Small)
                                 .color(Color::Muted),
                         )
-                        .child(Label::new(label).size(LabelSize::Small).color(Color::Default))
+                        .child(
+                            Label::new(label)
+                                .size(LabelSize::Small)
+                                .color(Color::Default),
+                        )
                         .child(
                             Label::new(status_text)
                                 .size(LabelSize::XSmall)
